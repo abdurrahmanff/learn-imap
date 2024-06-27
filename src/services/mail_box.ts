@@ -1,5 +1,6 @@
 import boxes from '../common/enums/boxes';
 import ImapClient from '../databases/imap/client';
+import MailerClient from '../databases/nodemailer/client';
 import MailRepository from '../repositories/mail';
 
 class MailBoxService {

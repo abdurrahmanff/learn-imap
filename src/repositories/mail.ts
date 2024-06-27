@@ -1,7 +1,7 @@
 import { MailBoxes } from 'node-imap';
 import { simpleParser } from 'mailparser';
-import boxes from '../common/enums/boxes';
 import ImapClient from '../databases/imap/client';
+import MailComposer from 'nodemailer/lib/mail-composer';
 
 class MailRepository {
   private readonly parseMail = async (buffer: string, mail: Mail) => {
@@ -45,6 +45,11 @@ class MailRepository {
     }
 
     return parsedBoxes;
+  };
+
+  private readonly composeMail = async (mail: Mail) => {
+    const composedMail = new MailComposer(mail);
+    return composedMail.compile().build();
   };
 
   private readonly openBox = async (
@@ -173,6 +178,30 @@ class MailRepository {
     return new Promise((resolve) => {
       client.imap.on('done', () => {
         resolve(mailList);
+      });
+    });
+  };
+
+  public readonly saveMailToBox = async (
+    client: ImapClient,
+    boxPath: string,
+    mail: Mail,
+    flags: string[] = [],
+  ) => {
+    const composedMail = await this.composeMail(mail);
+
+    this.openBox(client, boxPath, (err, box) => {
+      if (err) throw err;
+
+      client.imap.append(composedMail, { flags }, (err) => {
+        if (err) throw err;
+        client.imap.emit('done');
+      });
+    });
+
+    return new Promise<void>((resolve) => {
+      client.imap.once('done', () => {
+        resolve();
       });
     });
   };

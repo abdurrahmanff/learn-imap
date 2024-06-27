@@ -1,4 +1,5 @@
 import { JwtPayload } from 'jsonwebtoken';
+import { SendMailOptions } from 'nodemailer';
 
 declare global {
   namespace Express {
@@ -31,5 +32,9 @@ declare global {
 
   interface SearchByMessageIdPayload extends ClientPayload {
     messageId: string;
+  }
+
+  interface SendMailPayload extends ClientPayload {
+    mail: SendMailOptions;
   }
 }

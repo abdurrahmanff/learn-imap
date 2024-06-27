@@ -12,5 +12,6 @@ router.get(
   handler.searchMailByMessageIdHandler,
 );
 router.get('/boxes', AuthMiddleware.verifyToken, handler.getMailBoxesHandler);
+router.post('/send', AuthMiddleware.verifyToken, handler.sendMailHandler);
 
 export default router;
