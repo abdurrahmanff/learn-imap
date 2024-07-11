@@ -16,7 +16,7 @@ class SendMailService {
       await this.mailRepository.saveMailToBox(
         imapClient,
         boxes.SENT.path,
-        mail,
+        { ...mail, messageId: result.messageId },
         ['Seen'],
       );
       imapClient.imap.end();
