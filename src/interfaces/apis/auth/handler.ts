@@ -19,7 +19,6 @@ class AuthHandler {
       password,
       host,
     });
-    console.log(token);
     return res.status(201).send({
       success: true,
       message: 'Login success.',
