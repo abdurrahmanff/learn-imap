@@ -8,6 +8,12 @@ class SendMailService {
 
   readonly send = async ({ mail, ...cred }: SendMailPayload) => {
     const mailerClient = new MailerClient(cred);
+
+    const messageId = `<${crypto.randomUUID()}@wooblazz.com>`;
+    mail.headers = {
+      ...mail.headers,
+      'Message-ID': messageId,
+    };
     const result = await mailerClient.sendMail(mail);
 
     const imapClient = new ImapClient(cred);
@@ -16,7 +22,7 @@ class SendMailService {
       await this.mailRepository.saveMailToBox(
         imapClient,
         boxes.SENT.path,
-        { ...mail, messageId: result.messageId },
+        mail,
         ['Seen'],
       );
       imapClient.imap.end();
